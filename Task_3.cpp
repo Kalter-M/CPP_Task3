@@ -341,12 +341,20 @@ int main()
 			case 3:
 				try
 				{
-					flag = true;
-					while (flag)
+					if (cont.Size() != 0)
 					{
-						int num = InputInt("Введите индекс: ", true, 1, cont.Size());
-						it = cont.FindByIndex(num);
-						SearchAction(true, cont, it, c, flag);
+						flag = true;
+						while (flag)
+						{
+							int num = InputInt("Введите индекс: ", true, 1, cont.Size());
+							it = cont.FindByIndex(num);
+							SearchAction(true, cont, it, c, flag);
+						}
+					}
+					else
+					{
+						std::cout << "Контейнер пуст!" << std::endl;
+						flag = false;
 					}
 				}
 				catch (...) 
