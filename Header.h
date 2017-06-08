@@ -614,10 +614,10 @@ public:
 	}
 
 
-	bool Find(T el, std::random_access_iterator_tag &it)
+	bool Find(T el, std::_Vector_iterator<std::_Vector_val<std::_Simple_types<T>>> &it)
 	{
-		it = std::Find(vect.begin(), vect.end(), el);
-		return it != vect.end()
+		it = std::find(vect.begin(), vect.end(), el);
+		return it != vect.end();
 	}
 
 	bool Find(T el)
@@ -1008,7 +1008,7 @@ dec::decimal<2> InputDecimal(std::string message = "", bool isAdd = false, dec::
 		try {
 			std::cin >> str;
 			if (str == "выход") throw "выход";
-			if (str == "=" && !isAdd) return dec::decimal_cast<2>(0);
+			if (str == "=" && !isAdd) return dec::decimal_cast<2>(-1);
 			float tmpflt = std::stof(str);
 			res = dec::decimal_cast<2>(str);
 			while ((res < min || res > max)&&(str != "=")) {
@@ -1037,7 +1037,7 @@ int InputInt(std::string message = "", bool isAdd = false, int min = 0, int max 
 		{
 			std::cin >> str;
 			if (str == "выход") throw "выход";
-			if (str == "=" && !isAdd) return 0;
+			if (str == "=" && !isAdd) return -1;
 			res = std::stoi(str);
 			while (res < min || res > max)
 			{
@@ -1120,17 +1120,17 @@ void InputEmployeChange(std::vector<Employee>::iterator &it)
 	std::string tmpstr = "";
 
 	int tmpint = InputInt("¬ведите табельный номер(текущее " + std::to_string(it->PersonnelNumber) + "): ");
-	if (tmpint != 0) it->PersonnelNumber = tmpint;
+	if (tmpint != -1) it->PersonnelNumber = tmpint;
 
 	tmpint = InputInt("¬ведите номер отдела(текущее " + std::to_string(it->Department) + "): ");
-	if (tmpint != 0) it->Department = tmpint;
+	if (tmpint != -1) it->Department = tmpint;
 	
 	std::cout << "¬ведите фамилию(текущее: " + it->Name + "): ";
 	std::cin >> tmpstr;
 	if (tmpstr != "=") it->Name = tmpstr;
 
 	dec::decimal<2> tmpdec = InputDecimal("¬ведите оклад(текущее: " + dec::toString(it->Salary) + "): ");
-	if (tmpdec != dec::decimal_cast<2>(0)) it->Salary = tmpdec;
+	if (tmpdec != dec::decimal_cast<2>(-1)) it->Salary = tmpdec;
 
 	std::string datestr = it->EnrollmentDate.to_string();
 	Date dt = InputDate(false, "¬ведите дату поступлени€(дд.мм.гггг)(текущее : " + datestr + ")");
@@ -1139,22 +1139,22 @@ void InputEmployeChange(std::vector<Employee>::iterator &it)
 		it->EnrollmentDate = dt;
 
 	tmpdec = InputDecimal("¬ведите процент надбавки(текущее: " + dec::toString(it->Overhead) + "): ");
-	if (tmpdec != dec::decimal_cast<2>(0)) it->Overhead = tmpdec;
+	if (tmpdec != dec::decimal_cast<2>(-1)) it->Overhead = tmpdec;
 
 	tmpdec = InputDecimal("¬ведите подоходный налог(текущее: " + dec::toString(it->IncomeTax) + "): ");
-	if (tmpdec != dec::decimal_cast<2>(0)) it->IncomeTax = tmpdec;
+	if (tmpdec != dec::decimal_cast<2>(-1)) it->IncomeTax = tmpdec;
 
 	tmpint = InputInt("¬ведите кол - во отработанных дней в мес€це(текущее " + std::to_string(it->DaysWorked) + "): ", false, 0, 31);
-	if (tmpint != 0) it->DaysWorked = tmpint;
+	if (tmpint != -1) it->DaysWorked = tmpint;
 
 	tmpint = InputInt("¬ведите кол-во рабочих дней в мес€це(текущее " + std::to_string(it->AllWorkingDays) + "): ", false, 0, 31);
-	if (tmpint != 0) it->AllWorkingDays = tmpint;
+	if (tmpint != -1) it->AllWorkingDays = tmpint;
 
 	tmpdec = InputDecimal("¬ведите начислено(текущее: " + dec::toString(it->Accrued) + "): ");
-	if (tmpdec != dec::decimal_cast<2>(0)) it->Accrued = tmpdec;
+	if (tmpdec != dec::decimal_cast<2>(-1)) it->Accrued = tmpdec;
 
 	tmpdec = InputDecimal("¬ведите удержано(текущее: " + dec::toString(it->Withheld) + "): ");
-	if (tmpdec != dec::decimal_cast<2>(0)) it->Withheld = tmpdec;
+	if (tmpdec != dec::decimal_cast<2>(-1)) it->Withheld = tmpdec;
 }
 
 static void PrintHead()

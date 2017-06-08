@@ -15,51 +15,22 @@
 #include "Header.h"
 #include "Task_3.h"
 
+const int MaxLevel = 2;
+
+const std::string FName = "1.txt";
+
+
 void PrintMainMenu()
 {
 	std::cout << "-------------------------------------" << std::endl;
-	std::cout << " 1)Ввод" << std::endl;
-	std::cout << " 2)Вывод" << std::endl;
-	std::cout << " 3)Поиск по индексу" << std::endl;
-	std::cout << " 4)Добавление" << std::endl;
-	std::cout << " 5)Найти все по критерию" << std::endl;
-	std::cout << " 6)Отсортировать" << std::endl;
+	std::cout << " 1)Вывод" << std::endl;
+	std::cout << " 2)Добавление" << std::endl;
+	std::cout << " 3)Найти по критерию" << std::endl;
+	std::cout << " 4)Отсортировать" << std::endl;
 	std::cout << " 0)Выход" << std::endl;
 	std::cout << "------------------------------" << std::endl;
 	std::cout << "Введите команду: ";
 }
-
-void PrintMenuConsoleFile()
-{
-	std::cout << "-------------------------------------" << std::endl;
-	std::cout << " 1)Консоль" << std::endl;
-	std::cout << " 2)Файл" << std::endl;
-	std::cout << " 0)Выход" << std::endl;
-	std::cout << "------------------------------" << std::endl;
-	std::cout << "Введите команду: ";
-}
-
-void PrintMenuFindParam()
-{
-	std::cout << "-------------------------------------" << std::endl;
-	std::cout << " 1)По номеру отдела" << std::endl;
-	std::cout << " 2)По фамилии" << std::endl;
-	std::cout << " 3)По дате поступления" << std::endl;
-	std::cout << " 4)По окладу" << std::endl;
-	std::cout << " 0)Выход" << std::endl;
-	std::cout << "------------------------------" << std::endl;
-	std::cout << "Введите команду: ";
-}
-
-//void PrintMenuSearch()
-//{
-//	std::cout << "-------------------------------------" << std::endl;
-//	std::cout << " 1)Простой поиск" << std::endl;
-//	std::cout << " 2)Бинарный поиск" << std::endl;
-//	std::cout << " 0)Выход" << std::endl;
-//	std::cout << "------------------------------" << std::endl;
-//	std::cout << "Введите команду: ";
-//}
 
 void PrintAction()
 {
@@ -137,6 +108,7 @@ void PrintFind()
 	std::cout << "9 - По количеству рабочих дней" << std::endl;
 	std::cout << "10 - По начисленной сумме" << std::endl;
 	std::cout << "11 - По удержанной сумме" << std::endl;
+	std::cout << "12 - По индексу" << std::endl;
 	std::cout << "0 - Выход" << std::endl;
 	std::cout << "------------------------------" << std::endl;
 	std::cout << "Введите команду: ";
@@ -219,9 +191,11 @@ void SearchAction(bool found, EmpContainer& cont, std::vector<Employee>::iterato
 					break;
 				case 2:
 					cont.Change(it);
+					cont.FileOutput(std::fstream(FName, std::ios::out));
 					break;
 				case 3:
 					cont.Remove(it);
+					cont.FileOutput(std::fstream(FName, std::ios::out));
 					flag = false;
 					break;
 				case 4:
@@ -243,7 +217,152 @@ void SearchAction(bool found, EmpContainer& cont, std::vector<Employee>::iterato
 	}
 	else
 		std::cout << "Запись не найдена \n";
-		flag = false;
+	flag = false;
+}
+
+void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
+{
+	std::string c;
+	std::string str;
+	std::vector<Employee>::iterator it;
+	std::vector<Employee>::iterator it1;
+	int n;
+	PrintFind();
+	bool flag = true;
+	while (flag)
+	{
+		try
+		{
+			flag = false;
+			std::cin >> c;
+			n = std::stoi(c);
+			switch (n)
+			{
+			case 1:
+				sub = cont.FindSubVectByPersonnelNumber(InputInt("Введите табельный номер: ", true));
+				break;
+			case 2:
+				sub = cont.FindSubVectByDepartment(InputInt("Введите номер отдела: ", true));
+				break;
+			case 3:
+				std::cout << "Введите фамилию: ";
+				std::cin >> str;
+				sub = cont.FindSubVectByName(str);
+				break;
+			case 4:
+				sub = cont.FindSubVectBySalary(InputDecimal("Введите оклад: ", true));
+				break;
+			case 5:
+				sub = cont.FindSubVectByEnrollmentDate(InputDate(true, "Введите дату поступления: "));
+				break;
+
+			case 6:
+				sub = cont.FindSubVectByOverhead(InputDecimal("Введите надбавку: ", true));
+				break;
+			case 7:
+				sub = cont.FindSubVectByIncomeTax(InputDecimal("Введите налог: ", true));
+				break;
+			case 8:
+				sub = cont.FindSubVectByDaysWorked(InputInt("Введите кол-во отработанных дней в месяце: ", true));
+				break;
+			case 9:
+				sub = cont.FindSubVectByAllWorkingDays(InputInt("Введите кол-во рабочих дней в месяце: ", true));
+				break;
+			case 10:
+				sub = cont.FindSubVectByAccrued(InputDecimal("Введите начислено: ", true));
+				break;
+			case 11:
+				sub = cont.FindSubVectByWithheld(InputDecimal("Введите удержано: ", true));
+				break;
+			case 12:
+				if (sub.Size() != 0)
+				{
+					int num = InputInt("Введите индекс: ", true, 1, sub.Size());
+					it = sub.FindByIndex(num);
+					sub.Clear();
+					sub.Add(*it);
+				}
+				else
+				{
+					std::cout << "Контейнер пуст!" << std::endl;
+				}
+				break;
+			case 0:
+				return;
+				break;
+			default:
+				std::cout << "Неверная команда! Повторите ввод " << std::endl;
+				flag = true;
+				break;
+
+			}
+		}
+		catch (...)
+		{
+			std::cout << "Неверная команда!" << std::endl;
+		}
+	}
+
+	if (sub.Size() == 0)
+	{
+		std::cout << "Ничего не найдено!" << std::endl;
+		return;
+	}
+	if (sub.Size() == 1)
+	{
+		try
+		{
+			it1 = sub.FindByIndex(1);
+
+			cont.Find(*it1, it);
+			SearchAction(true, cont, it, c, flag);
+		}
+		catch (std::string s)
+		{
+			std::cout << s << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Найдено записей: " << sub.Size() << std::endl;
+		std::cout << std::endl;
+		ConsoleOutput(sub);
+		if (lev == MaxLevel)
+		{
+			std::cout << "Выполнить поиск по индексу?" << std::endl;
+			std::cout << "1) Да" << std::endl;
+			std::cout << "0) Выход" << std::endl;
+			std::cin >> c;
+			n = std::stoi(c);
+
+			switch (n)
+			{
+			case 1:
+				try
+				{
+					int num = InputInt("Введите индекс: ", true, 1, sub.Size());
+					it = sub.FindByIndex(num);
+					cont.Find(*it1, it);
+					SearchAction(true, cont, it, c, flag);
+				}
+				catch (...)
+				{
+					std::cout << "Ошибка поиска!" << std::endl;
+				}
+				break;
+			case 0:
+				return;
+			default:
+				std::cout << "Неверная команда!" << std::endl;
+				return;
+				break;
+			}
+		}
+		else
+		{
+			Filtering(lev + 1, sub, sub);
+		}
+	}
 }
 
 int main()
@@ -258,11 +377,12 @@ int main()
 	bool flag;
 	bool binarySearch;
 	bool found;
-	std::string FName;
 	std::vector<Employee>::iterator it;
 
 	while (true)
 	{
+		cont.FileInput(std::fstream(FName, std::ios::in));
+
 		PrintMainMenu();
 		std::cin >> c;
 		try
@@ -270,7 +390,7 @@ int main()
 			n = std::stoi(c);
 			switch (n)
 			{
-			case 1:
+			/*case 1:
 				flag = true;
 				while (flag)
 				{
@@ -303,170 +423,61 @@ int main()
 						std::cout << "Неверная команда!" << std::endl;
 					}
 				}
+				break;*/
+			//case 1:
+			//	flag = true;
+			//	while (flag)
+			//	{
+			//		PrintMenuConsoleFile();
+			//		std::cin >> c;
+			//		try
+			//		{
+			//			n = std::stoi(c);
+			//			switch (n)
+			//			{
+			//			case 1:
+			//				ConsoleOutput(cont);
+			//				flag = false;
+			//				break;
+			//			case 2:
+			//				FName = InputFileName();
+			//				cont.FileOutput(std::fstream(FName, std::ios::out));
+			//				flag = false;
+			//				break;
+			//			case 0:
+			//				flag = false;
+			//				break;
+			//			default:
+			//				std::cout << "Неверная команда!" << std::endl;
+			//				break;
+			//			}
+			//		}
+			//		catch (...)
+			//		{
+			//			std::cout << "Неверная команда!" << std::endl;
+			//		}
+			//	}
+			//	break;
+			case 1:
+				ConsoleOutput(cont);
 				break;
 			case 2:
-				flag = true;
-				while (flag)
-				{
-					PrintMenuConsoleFile();
-					std::cin >> c;
-					try
-					{
-						n = std::stoi(c);
-						switch (n)
-						{
-						case 1:
-							ConsoleOutput(cont);
-							flag = false;
-							break;
-						case 2:
-							FName = InputFileName();
-							cont.FileOutput(std::fstream(FName, std::ios::out));
-							flag = false;
-							break;
-						case 0:
-							flag = false;
-							break;
-						default:
-							std::cout << "Неверная команда!" << std::endl;
-							break;
-						}
-					}
-					catch (...)
-					{
-						std::cout << "Неверная команда!" << std::endl;
-					}
-				}
-				break;
-			case 3:
-				try
-				{
-					if (cont.Size() != 0)
-					{
-						flag = true;
-						while (flag)
-						{
-							int num = InputInt("Введите индекс: ", true, 1, cont.Size());
-							it = cont.FindByIndex(num);
-							SearchAction(true, cont, it, c, flag);
-						}
-					}
-					else
-					{
-						std::cout << "Контейнер пуст!" << std::endl;
-						flag = false;
-					}
-				}
-				catch (...) 
-				{
-					flag = false;
-				}
-				break;
-			case 4:
 				try
 				{
 					cont.Add(InputEmployee());
+					cont.FileOutput(std::fstream(FName, std::ios::out));
 				}
 				catch (...) {
 					flag = false;
 				}
 				break;
-
 			//НАЙТИ ПО КРИТЕРИЮ
-			case 5:
-				flag = true;
-				while (flag)
-				{
-					std::cout << "Поиск по параметру" << std::endl;
-					PrintFind();
-					std::cin >> c;
-					try
-					{
-						n = std::stoi(c);
-						switch (n)
-						{
-						case 1:
-							sub = cont.FindSubVectByPersonnelNumber(InputInt("Введите табельный номер: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 2:
-							sub = cont.FindSubVectByDepartment(InputInt("Введите номер отдела: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 3:
-							std::cout << "Введите фамилию: ";
-							std::cin >> str;
-							sub = cont.FindSubVectByName(str);
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 4:
-							sub = cont.FindSubVectBySalary(InputDecimal("Введите оклад: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 5:
-							sub = cont.FindSubVectByEnrollmentDate(InputDate(true, "Введите дату поступления: "));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-
-						case 6:
-							sub = cont.FindSubVectByOverhead(InputDecimal("Введите надбавку: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 7:
-							sub = cont.FindSubVectByIncomeTax(InputDecimal("Введите налог: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 8:
-							sub = cont.FindSubVectByDaysWorked(InputInt("Введите кол-во отработанных дней в месяце: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 9:
-							sub = cont.FindSubVectByAllWorkingDays(InputInt("Введите кол-во рабочих дней в месяце: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 10:
-							sub = cont.FindSubVectByAccrued(InputDecimal("Введите начислено: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 11:
-							sub = cont.FindSubVectByWithheld(InputDecimal("Введите удержано: ", true));
-							flag = true;
-							while (flag)
-								SubAction(sub, c, flag);
-							break;
-						case 0:
-							flag = false;
-						}
-					}
-					catch (...)
-					{
-						std::cout << "Неверная команда!" << std::endl;
-					}
-				}
-
+			case 3:
+				sub.Clear();
+				Filtering(1, cont, sub);
 				break;
 			//СОРТИРОВКА
-			case 6:
+			case 4:
 				flag = true;
 				while (flag)
 				{
@@ -526,6 +537,7 @@ int main()
 							flag = false;
 						}
 						ConsoleOutput(cont);
+						cont.FileOutput(std::fstream(FName, std::ios::out));
 					}
 					catch (...)
 					{
