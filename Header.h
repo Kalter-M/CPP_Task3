@@ -656,7 +656,7 @@ public:
 		std::sort(vect.begin(), vect.end(), comp);
 		std::_Vector_iterator<std::_Vector_val<std::_Simple_types<T>>> tmpIt;
 		tmpIt = std::lower_bound(vect.begin(), vect.end(), bibb, comp);
-		if (tmpIt == vect.end() && !comp(bibb, *tmpIt))
+		if (tmpIt == vect.end() || comp(bibb, *tmpIt))
 			return false;
 		it = tmpIt;
 		return true;
@@ -746,7 +746,7 @@ public:
 		Employee employee = Employee();
 		employee.Department = dep;
 
-		return FindByBinary(c, employee, it) && it->Department == dep;
+		return FindByBinary(c, employee, it);
 	}
 
 	bool FindByNameBinary(std::string name, std::vector<Employee>::iterator &it)
@@ -755,7 +755,7 @@ public:
 		Employee employee = Employee();
 		employee.Name = name;
 
-		return FindByBinary(c, employee, it) && it->Name == name;
+		return FindByBinary(c, employee, it);
 	}
 
 	bool FindByEnrollmentDateBinary(Date date, std::vector<Employee>::iterator &it)
@@ -764,7 +764,7 @@ public:
 		Employee employee = Employee();
 		employee.EnrollmentDate = date;
 
-		return FindByBinary(c, employee, it) && it->EnrollmentDate == date;
+		return FindByBinary(c, employee, it);
 	}
 
 	bool FindBySalaryBinary(dec::decimal<2> salary, std::vector<Employee>::iterator &it)
@@ -773,7 +773,7 @@ public:
 		Employee employee = Employee();
 		employee.Salary = salary;
 
-		return FindByBinary(c, employee, it) && it->Salary == salary;
+		return FindByBinary(c, employee, it);
 	}
 
 	EmpContainer FindSubVectByPersonnelNumber(int num)
