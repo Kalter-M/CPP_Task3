@@ -375,8 +375,6 @@ int main()
 	std::string str;
 	int n;
 	bool flag;
-	bool binarySearch;
-	bool found;
 	std::vector<Employee>::iterator it;
 
 	while (true)
@@ -390,74 +388,6 @@ int main()
 			n = std::stoi(c);
 			switch (n)
 			{
-			/*case 1:
-				flag = true;
-				while (flag)
-				{
-					PrintMenuConsoleFile();
-					std::cin >> c;
-					try
-					{
-						n = std::stoi(c);
-						switch (n)
-						{
-						case 1:
-							ConsoleInput(cont);
-							flag = false;
-							break;
-						case 2:
-							FName = InputFileName();
-							cont.FileInput(std::fstream(FName, std::ios::in));
-							flag = false;
-							break;
-						case 0:
-							flag = false;
-							break;
-						default:
-							std::cout << "Неверная команда!" << std::endl;
-							break;
-						}
-					}
-					catch (...)
-					{
-						std::cout << "Неверная команда!" << std::endl;
-					}
-				}
-				break;*/
-			//case 1:
-			//	flag = true;
-			//	while (flag)
-			//	{
-			//		PrintMenuConsoleFile();
-			//		std::cin >> c;
-			//		try
-			//		{
-			//			n = std::stoi(c);
-			//			switch (n)
-			//			{
-			//			case 1:
-			//				ConsoleOutput(cont);
-			//				flag = false;
-			//				break;
-			//			case 2:
-			//				FName = InputFileName();
-			//				cont.FileOutput(std::fstream(FName, std::ios::out));
-			//				flag = false;
-			//				break;
-			//			case 0:
-			//				flag = false;
-			//				break;
-			//			default:
-			//				std::cout << "Неверная команда!" << std::endl;
-			//				break;
-			//			}
-			//		}
-			//		catch (...)
-			//		{
-			//			std::cout << "Неверная команда!" << std::endl;
-			//		}
-			//	}
-			//	break;
 			case 1:
 				ConsoleOutput(cont);
 				break;
