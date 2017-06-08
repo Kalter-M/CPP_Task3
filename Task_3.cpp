@@ -275,10 +275,10 @@ void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
 				sub = cont.FindSubVectByWithheld(InputDecimal("Введите удержано: ", true));
 				break;
 			case 12:
-				if (sub.Size() != 0)
+				if (cont.Size() != 0)
 				{
-					int num = InputInt("Введите индекс: ", true, 1, sub.Size());
-					it = sub.FindByIndex(num);
+					int num = InputInt("Введите индекс: ", true, 1, cont.Size());
+					it = cont.FindByIndex(num);
 					sub.Clear();
 					sub.Add(*it);
 				}
