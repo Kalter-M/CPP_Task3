@@ -45,9 +45,24 @@ void PrintAction()
 	std::cout << "Введите команду: ";
 }
 
+dec::decimal<2> IncomeTaxRate(std::vector<Employee>::iterator& it)
+{
+	return (dec::decimal_cast<2>(1) - (it->IncomeTax / 100));
+}
+
+dec::decimal<2> OverheadRate(std::vector<Employee>::iterator& it)
+{
+	return (dec::decimal_cast<2>(1) + (it->Overhead / 100));
+}
+
+dec::decimal<2> WorkingDaysRate(std::vector<Employee>::iterator& it)
+{
+	return (dec::decimal_cast<2>(dec::decimal_cast<2>(it->DaysWorked) / it->AllWorkingDays));
+}
+
 dec::decimal<2> CountSalary(std::vector<Employee>::iterator& it, int month)
 {
-	return (it->Salary * (dec::decimal_cast<2>(1) - (it->IncomeTax / 100)) * (dec::decimal_cast<2>(1)+( it->Overhead / 100))  * month);
+	return (it->Salary * IncomeTaxRate(it) * OverheadRate(it) * WorkingDaysRate(it) * month);
 }
 
 void CountSalaryMenu(std::vector<Employee>::iterator& it)
@@ -108,7 +123,6 @@ void PrintFind()
 	std::cout << "9 - По количеству рабочих дней" << std::endl;
 	std::cout << "10 - По начисленной сумме" << std::endl;
 	std::cout << "11 - По удержанной сумме" << std::endl;
-	//std::cout << "12 - По индексу" << std::endl;
 	std::cout << "0 - Выход" << std::endl;
 	std::cout << "------------------------------" << std::endl;
 	std::cout << "Введите команду: ";
@@ -295,19 +309,6 @@ void Filtering(int lev, EmpContainer &cont, EmpContainer &sub, EmpContainer &mai
 			case 11:
 				sub = cont.FindSubVectByWithheld(InputDecimal("Введите удержано: ", true));
 				break;
-			//case 12:
-			//	if (cont.Size() != 0)
-			//	{
-			//		int num = InputInt("Введите индекс: ", true, 1, cont.Size());
-			//		it = cont.FindByIndex(num);
-			//		sub.Clear();
-			//		sub.Add(*it);
-			//	}
-			//	else
-			//	{
-			//		std::cout << "Контейнер пуст!" << std::endl;
-			//	}
-			//	break;
 			case 0:
 				return;
 				break;

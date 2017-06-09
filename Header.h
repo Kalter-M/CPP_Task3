@@ -629,8 +629,6 @@ public:
 
 	bool Find(T el, std::_Vector_iterator<std::_Vector_val<std::_Simple_types<T>>> &it)
 	{
-		//it = std::find(vect.begin(), vect.end(), el);
-		//return it != vect.end();
 
 		std::_Vector_iterator<std::_Vector_val<std::_Simple_types<T>>> it1;
 		it1 = std::find(vect.begin(), vect.end(), el);
