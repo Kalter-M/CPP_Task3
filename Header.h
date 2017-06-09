@@ -77,12 +77,30 @@ public:
 
 	bool operator==(const Employee& that) const
 	{
-		return	this->PersonnelNumber == that.PersonnelNumber;
+		return	this->PersonnelNumber == that.PersonnelNumber && 
+			this->Accrued == that.Accrued &&
+			this->Withheld == that.Withheld &&
+			this->DaysWorked == that.DaysWorked &&
+			this->AllWorkingDays == that.AllWorkingDays &&
+			this->Salary == that.Salary &&
+			this->Department == that.Department &&
+			this->IncomeTax == that.IncomeTax &&
+			this->Overhead == that.Overhead &&
+			this->Name == that.Name;
 	}
 
 	bool operator < (const Employee &that)
 	{
-		return this->PersonnelNumber < that.PersonnelNumber;
+		return	this->PersonnelNumber < that.PersonnelNumber &&
+			this->Accrued < that.Accrued &&
+			this->Withheld < that.Withheld &&
+			this->DaysWorked < that.DaysWorked &&
+			this->AllWorkingDays < that.AllWorkingDays &&
+			this->Salary < that.Salary &&
+			this->Department < that.Department &&
+			this->IncomeTax < that.IncomeTax &&
+			this->Overhead < that.Overhead &&
+			this->Name < that.Name;
 	}
 };
 
@@ -605,19 +623,23 @@ public:
 	~Container() {}
 
 	void Add(T el) {
-		//if (!Find(el))
-		//{
 			vect.push_back(el);
-		//}
-		//else
-		//	return false;
 	}
 
 
 	bool Find(T el, std::_Vector_iterator<std::_Vector_val<std::_Simple_types<T>>> &it)
 	{
-		it = std::find(vect.begin(), vect.end(), el);
-		return it != vect.end();
+		//it = std::find(vect.begin(), vect.end(), el);
+		//return it != vect.end();
+
+		std::_Vector_iterator<std::_Vector_val<std::_Simple_types<T>>> it1;
+		it1 = std::find(vect.begin(), vect.end(), el);
+		if (it1 != vect.end())
+		{
+			it = it1;
+			return true;
+		}
+		return false;
 	}
 
 	bool Find(T el)
@@ -647,7 +669,7 @@ public:
 		{
 			it++;
 		}
-		return it;
+		return vect.begin() + index - 1;
 	}
 
 	template<class Comparator>
@@ -813,42 +835,42 @@ public:
 
 	EmpContainer FindSubVectByOverhead(dec::decimal<2> o)
 	{
-		SalarySubVector osv = SalarySubVector(o);
+		OverheadSubVector osv = OverheadSubVector(o);
 
 		return EmpContainer(FindSubSetBy(osv));
 	}
 
 	EmpContainer FindSubVectByIncomeTax(dec::decimal<2> i)
 	{
-		SalarySubVector isv = SalarySubVector(i);
+		IncomeTaxSubVector isv = IncomeTaxSubVector(i);
 
 		return EmpContainer(FindSubSetBy(isv));
 	}
 
 	EmpContainer FindSubVectByDaysWorked(int d)
 	{
-		DepartmentSubVector dsv = DepartmentSubVector(d);
+		DaysWorkedSubVector dsv = DaysWorkedSubVector(d);
 
 		return EmpContainer(FindSubSetBy(dsv));
 	}
 
 	EmpContainer FindSubVectByAllWorkingDays(int d)
 	{
-		DepartmentSubVector dsv = DepartmentSubVector(d);
+		AllWorkingDaysSubVector dsv = AllWorkingDaysSubVector(d);
 
 		return EmpContainer(FindSubSetBy(dsv));
 	}
 
 	EmpContainer FindSubVectByAccrued(dec::decimal<2> a)
 	{
-		SalarySubVector asv = SalarySubVector(a);
+		AccruedSubVector asv = AccruedSubVector(a);
 
 		return EmpContainer(FindSubSetBy(asv));
 	}
 
 	EmpContainer FindSubVectByWithheld(dec::decimal<2> w)
 	{
-		SalarySubVector wsv = SalarySubVector(w);
+		WithheldSubVector wsv = WithheldSubVector(w);
 
 		return EmpContainer(FindSubSetBy(wsv));
 	}
@@ -932,11 +954,16 @@ public:
 				emp = *is++;
 			}
 			if (emp.PersonnelNumber != 0)
-			Add(emp);
+			{
+				Add(emp);
+				fin.close();
+			}
+			else
+				throw "Ошибка загрузки";
 			fin.close();
 		}
 		else
-			std::cout << "Файл не найден!" << std::endl;
+			throw "Ошибка загрузки";
 	}
 
 	void FileOutput(std::fstream& fout)
@@ -947,7 +974,7 @@ public:
 			fout.close();
 		}
 		else
-			std::cout << "Ошибка вывода";
+			throw "Ошибка вывода";
 	}
 
 	void Output(std::ostream_iterator<Employee> os)

@@ -47,7 +47,7 @@ void PrintAction()
 
 dec::decimal<2> CountSalary(std::vector<Employee>::iterator& it, int month)
 {
-	return it->Salary * month;
+	return (it->Salary * (dec::decimal_cast<2>(1) - (it->IncomeTax / 100)) * (dec::decimal_cast<2>(1)+( it->Overhead / 100))  * month);
 }
 
 void CountSalaryMenu(std::vector<Employee>::iterator& it)
@@ -108,7 +108,7 @@ void PrintFind()
 	std::cout << "9 - По количеству рабочих дней" << std::endl;
 	std::cout << "10 - По начисленной сумме" << std::endl;
 	std::cout << "11 - По удержанной сумме" << std::endl;
-	std::cout << "12 - По индексу" << std::endl;
+	//std::cout << "12 - По индексу" << std::endl;
 	std::cout << "0 - Выход" << std::endl;
 	std::cout << "------------------------------" << std::endl;
 	std::cout << "Введите команду: ";
@@ -148,7 +148,14 @@ void SubAction(EmpContainer& sub, std::string& c, bool& flag)
 				break;
 			case 2:
 				FName = InputFileName();
-				sub.FileOutput(std::fstream(FName, std::ios::out));
+				try
+				{
+					sub.FileOutput(std::fstream(FName, std::ios::out));
+				}
+				catch (...)
+				{
+					std::cout << "Ошибка загрузки" << std::endl;
+				}
 				break;
 			case 0:
 				flag = false;
@@ -191,11 +198,25 @@ void SearchAction(bool found, EmpContainer& cont, std::vector<Employee>::iterato
 					break;
 				case 2:
 					cont.Change(it);
-					cont.FileOutput(std::fstream(FName, std::ios::out));
+					try
+					{
+						cont.FileOutput(std::fstream(FName, std::ios::out));
+					}
+					catch (...)
+					{
+						std::cout << "Ошибка загрузки" << std::endl;
+					}
 					break;
 				case 3:
 					cont.Remove(it);
-					cont.FileOutput(std::fstream(FName, std::ios::out));
+					try
+					{
+						cont.FileOutput(std::fstream(FName, std::ios::out));
+					}
+					catch (...)
+					{
+						std::cout << "Ошибка загрузки" << std::endl;
+					}
 					flag = false;
 					break;
 				case 4:
@@ -220,7 +241,7 @@ void SearchAction(bool found, EmpContainer& cont, std::vector<Employee>::iterato
 	flag = false;
 }
 
-void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
+void Filtering(int lev, EmpContainer &cont, EmpContainer &sub, EmpContainer &main)
 {
 	std::string c;
 	std::string str;
@@ -274,19 +295,19 @@ void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
 			case 11:
 				sub = cont.FindSubVectByWithheld(InputDecimal("Введите удержано: ", true));
 				break;
-			case 12:
-				if (cont.Size() != 0)
-				{
-					int num = InputInt("Введите индекс: ", true, 1, cont.Size());
-					it = cont.FindByIndex(num);
-					sub.Clear();
-					sub.Add(*it);
-				}
-				else
-				{
-					std::cout << "Контейнер пуст!" << std::endl;
-				}
-				break;
+			//case 12:
+			//	if (cont.Size() != 0)
+			//	{
+			//		int num = InputInt("Введите индекс: ", true, 1, cont.Size());
+			//		it = cont.FindByIndex(num);
+			//		sub.Clear();
+			//		sub.Add(*it);
+			//	}
+			//	else
+			//	{
+			//		std::cout << "Контейнер пуст!" << std::endl;
+			//	}
+			//	break;
 			case 0:
 				return;
 				break;
@@ -314,12 +335,12 @@ void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
 		{
 			it1 = sub.FindByIndex(1);
 
-			cont.Find(*it1, it);
-			SearchAction(true, cont, it, c, flag);
+			bool tmpp = main.Find(*it1, it);
+			SearchAction(true, main, it, c, flag);
 		}
-		catch (std::string s)
+		catch (...)
 		{
-			std::cout << s << std::endl;
+			std::cout << "Ошибка" << std::endl;
 		}
 	}
 	else
@@ -341,9 +362,10 @@ void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
 				try
 				{
 					int num = InputInt("Введите индекс: ", true, 1, sub.Size());
-					it = sub.FindByIndex(num);
-					cont.Find(*it1, it);
-					SearchAction(true, cont, it, c, flag);
+
+					it1 = sub.FindByIndex(num);
+					main.Find(*it1, it);
+					SearchAction(true, main, it, c, flag);
 				}
 				catch (...)
 				{
@@ -360,7 +382,7 @@ void Filtering(int lev, EmpContainer &cont, EmpContainer &sub)
 		}
 		else
 		{
-			Filtering(lev + 1, sub, sub);
+			Filtering(lev + 1, sub, sub, main);
 		}
 	}
 }
@@ -379,7 +401,16 @@ int main()
 
 	while (true)
 	{
-		cont.FileInput(std::fstream(FName, std::ios::in));
+		try
+		{
+			cont.FileInput(std::fstream(FName, std::ios::in));
+		}
+		catch (...)
+		{
+			std::cout << "Ошибка загрузки" << std::endl;
+		}
+
+		
 
 		PrintMainMenu();
 		std::cin >> c;
@@ -395,7 +426,14 @@ int main()
 				try
 				{
 					cont.Add(InputEmployee());
-					cont.FileOutput(std::fstream(FName, std::ios::out));
+					try
+					{
+						cont.FileOutput(std::fstream(FName, std::ios::out));
+					}
+					catch (...)
+					{
+						std::cout << "Ошибка вывода" << std::endl;
+					}
 				}
 				catch (...) {
 					flag = false;
@@ -404,7 +442,7 @@ int main()
 			//НАЙТИ ПО КРИТЕРИЮ
 			case 3:
 				sub.Clear();
-				Filtering(1, cont, sub);
+				Filtering(1, cont, sub, cont);
 				break;
 			//СОРТИРОВКА
 			case 4:
@@ -467,7 +505,14 @@ int main()
 							flag = false;
 						}
 						ConsoleOutput(cont);
-						cont.FileOutput(std::fstream(FName, std::ios::out));
+						try
+						{
+							cont.FileOutput(std::fstream(FName, std::ios::out));
+						}
+						catch (...)
+						{
+							std::cout << "Ошибка загрузки" << std::endl;
+						}
 					}
 					catch (...)
 					{
